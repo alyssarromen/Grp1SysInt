@@ -1,7 +1,7 @@
 from flask import Flask, render_template_string
 import requests
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 # HTML template with the map using Leaflet.js
 html_template = """
@@ -12,48 +12,108 @@ html_template = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IP Information with Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet"> <!-- Montserrat Font -->
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; padding: 20px; }
-        h1 { color: #6a0dad; }
-        .info { background-color: #e0f7fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-        .info p { margin: 5px 0; }
-        .error { color: red; }
-        #map { height: 400px; width: 100%; border-radius: 10px; }
+        body {
+            font-family: 'Montserrat', sans-serif; /* Use Montserrat font */
+            font-size: 15px; /* Set body font size */
+            background-color: #f8f9fa;
+            color: #343a40;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            font-size: 30px; /* Set header font size */
+            color: #009113;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .info {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .info div {
+            flex: 1;
+            margin: 0 10px; /* Add margin between columns */
+        }
+        .info h2 {
+            color: #495057;
+        }
+        .info p {
+            margin: 5px 0;
+        }
+        .error {
+            color: #dc3545;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
-    <h1>Public IP Information</h1>
-    <div class="info">
-        {% if ipv4_error %}
-            <p class="error">{{ ipv4_error }}</p>
-        {% else %}
-            <h2>IPv4 Information</h2>
-            <p><strong>IP Address:</strong> {{ ipv4_info.get('ip') }}</p>
-            <p><strong>City:</strong> {{ ipv4_info.get('city') }}</p>
-            <p><strong>Region:</strong> {{ ipv4_info.get('region') }}</p>
-            <p><strong>Country:</strong> {{ ipv4_info.get('country_name') }}</p>
-            <p><strong>Latitude:</strong> {{ ipv4_info.get('latitude') }}</p>
-            <p><strong>Longitude:</strong> {{ ipv4_info.get('longitude') }}</p>
-            <p><strong>ISP:</strong> {{ ipv4_info.get('org') }}</p>
-            <p><strong>ASN:</strong> {{ ipv4_info.get('asn') }}</p>
-        {% endif %}
+    <div class="container">
+        <h1>Public IP Information</h1>
+        <div class="info">
+            <div> <!-- IPv4 Column -->
+                {% if ipv4_error %}
+                    <p class="error">{{ ipv4_error }}</p>
+                {% else %}
+                    <h2>IPv4 Information</h2>
+                    <p><strong>IP Address:</strong> {{ ipv4_info.get('ip') }}</p>
+                    <p><strong>City:</strong> {{ ipv4_info.get('city') }}</p>
+                    <p><strong>Region:</strong> {{ ipv4_info.get('region') }}</p>
+                    <p><strong>Country:</strong> {{ ipv4_info.get('country_name') }}</p>
+                    <p><strong>Latitude:</strong> {{ ipv4_info.get('latitude') }}</p>
+                    <p><strong>Longitude:</strong> {{ ipv4_info.get('longitude') }}</p>
+                    <p><strong>ISP:</strong> {{ ipv4_info.get('org') }}</p>
+                    <p><strong >ASN:</strong> {{ ipv4_info.get('asn') }}</p>
+                {% endif %}
+            </div>
 
-        {% if ipv6_error %}
-            <p class="error">{{ ipv6_error }}</p>
-        {% else %}
-            <h2>IPv6 Information</h2>
-            <p><strong>IP Address:</strong> {{ ipv6_info.get('ip') }}</p>
-            <p><strong>City:</strong> {{ ipv6_info.get('city') }}</p>
-            <p><strong>Region:</strong> {{ ipv6_info.get('region') }}</p>
-            <p><strong>Country:</strong> {{ ipv6_info.get('country_name') }}</p>
-            <p><strong>Latitude:</strong> {{ ipv6_info.get('latitude') }}</p>
-            <p><strong>Longitude:</strong> {{ ipv6_info.get('longitude') }}</p>
-            <p><strong>ISP:</strong> {{ ipv6_info.get('org') }}</p>
-            <p><strong>ASN:</strong> {{ ipv6_info.get('asn') }}</p>
-        {% endif %}
+            <div> <!-- IPv6 Column -->
+                {% if ipv6_error %}
+                    <p class="error">{{ ipv6_error }}</p>
+                {% else %}
+                    <h2>IPv6 Information</h2>
+                    <p><strong>IP Address:</strong> {{ ipv6_info.get('ip') }}</p>
+                    <p><strong>City:</strong> {{ ipv6_info.get('city') }}</p>
+                    <p><strong>Region:</strong> {{ ipv6_info.get('region') }}</p>
+                    <p><strong>Country:</strong> {{ ipv6_info.get('country_name') }}</p>
+                    <p><strong>Latitude:</strong> {{ ipv6_info.get('latitude') }}</p>
+                    <p><strong>Longitude:</strong> {{ ipv6_info.get('longitude') }}</p>
+                    <p><strong>ISP:</strong> {{ ipv6_info.get('org') }}</p>
+                    <p><strong>ASN:</strong> {{ ipv6_info.get('asn') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="map"></div>  <!-- Map container -->
     </div>
 
-    <div id="map"></div>  <!-- Map container -->
+    <footer>
+        <p>Powered by Flask and Leaflet.js</p>
+    </footer>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
@@ -64,7 +124,7 @@ html_template = """
         // Load and display tile layer from OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
-            attribution: '© OpenStreetMap'
+            attribution: 'OpenStreetMap'
         }).addTo(map);
 
         // Add a marker for IPv4 if available
@@ -114,5 +174,5 @@ def get_ip_info():
         return render_template_string(html_template, ipv4_info=None, ipv4_error=f"Error occurred: {e}",
                                       ipv6_info=None, ipv6_error=f"Error occurred: {e}")
 
-if _name_ == "_main_":
+if __name__ == "_main_":
     app.run(debug=True)
