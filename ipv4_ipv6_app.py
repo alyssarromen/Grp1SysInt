@@ -1,7 +1,7 @@
 from flask import Flask, render_template_string
 import requests
 
-app = Flask(__name__)
+app = Flask(_name_)
 
 # HTML template with the map using Leaflet.js
 html_template = """
@@ -114,5 +114,5 @@ def get_ip_info():
         return render_template_string(html_template, ipv4_info=None, ipv4_error=f"Error occurred: {e}",
                                       ipv6_info=None, ipv6_error=f"Error occurred: {e}")
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     app.run(debug=True)
